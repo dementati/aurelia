@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="neutral">#FFFFFF</color>
+    <color name="go">#99CC00</color>
+    <color name="stay">#FF4444</color>
+    
+</resources>
