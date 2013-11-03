@@ -1,36 +1,18 @@
 package com.github.dementati.aurelia;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends PreferenceActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_settings);
-		// Show the Up button in the action bar.
-		setupActionBar();
 		
-		getFragmentManager().beginTransaction()
-			.replace(android.R.id.content, new SettingsFragment())
-			.commit();
-	}
-
-	/**
-	 * Set up the {@link android.app.ActionBar}, if the API is available.
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupActionBar() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
+		addPreferencesFromResource(R.xml.preferences);
 	}
 
 	@Override
@@ -56,17 +38,4 @@ public class SettingsActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	
-	
-	public static class SettingsFragment extends PreferenceFragment {
-    	@Override
-    	public void onCreate(Bundle savedInstanceState) {
-    		// TODO Auto-generated method stub
-    		super.onCreate(savedInstanceState);
-    		
-    		addPreferencesFromResource(R.xml.preferences);
-    	}
-    }
-
 }
