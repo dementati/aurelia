@@ -10,7 +10,11 @@ import org.jsoup.select.Elements;
 import android.util.Log;
 
 public class GeophysInstRetriever {	
-	public static int retrieveLevel(int year, int month, int day) {
+	public static int retrieveLevel(Calendar calendar) {
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		
 		Log.i("GeophysInstRetriever", "retrieveLevel(" + year + ", " + month + ", " + day + ")");
 		
 		String url = "http://www.gi.alaska.edu/AuroraForecast/Europe/" + year + "/" + month + "/" + day;
@@ -18,7 +22,11 @@ public class GeophysInstRetriever {
 		try {
 			doc = Jsoup.connect(url).get();
 			Elements spans = doc.select(".main .levels>span");
-			return Integer.parseInt(spans.get(1).text());
+			if(spans.size() == 0) {
+				return -1;
+			} else {
+				return Integer.parseInt(spans.get(1).text());
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -29,10 +37,13 @@ public class GeophysInstRetriever {
 	
 	public static int retrieveLevel() {
 		Calendar calendar = Calendar.getInstance();
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		
-		return retrieveLevel(year, month, day);
+		int level = retrieveLevel(calendar);
+		if(level == -1) { // Data for today may not be published, try for yesterday.
+			calendar.add(Calendar.DATE, -1);
+			return retrieveLevel(calendar);
+		} else {
+			return level;
+		}
 	}
 }
