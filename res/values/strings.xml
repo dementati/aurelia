@@ -8,7 +8,8 @@
     <string name="output_neutral">Loading&#8230;</string>
     <string name="output_go">Go</string>
     <string name="output_stay">Stay</string>
-    <string name="explanation_go">The current level is %d!</string>
-    <string name="explanation_stay">The current level is only %d.</string>
+    <string name="explanation_go">The current level is %d and the weather is fair!</string>
+    <string name="explanation_stay_level">The current level is only %d.</string>
+    <string name="explanation_stay_cloudy">The level is %d, but it is cloudy.</string>
 
 </resources>

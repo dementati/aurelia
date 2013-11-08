@@ -1,5 +1,7 @@
 package com.github.dementati.aurelia;
 
+import com.github.dementati.aurelia.YrRetriever.Weather;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -66,6 +68,7 @@ public class MainActivity extends ActionBarActivity {
     private class DataRetrievalResult {
 		int currentLevel;
 		int minLevel; 
+		YrRetriever.Weather weather;
 	}
     
     private class DataRetrievalTask extends AsyncTask<Void, Void, DataRetrievalResult> {
@@ -79,6 +82,8 @@ public class MainActivity extends ActionBarActivity {
     		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
     		result.minLevel = pref.getInt("pref_level", 2);
     		
+    		result.weather = YrRetriever.retrieveWeather("Sweden", "Västerbotten", "Umeå");
+    		
     		return result;
     	}
     	
@@ -87,14 +92,18 @@ public class MainActivity extends ActionBarActivity {
     		TextView outputText = (TextView)findViewById(R.id.output);
     		TextView explanationText = (TextView)findViewById(R.id.explanation);
     		
-    		if(result.currentLevel >= result.minLevel) {
+    		if(result.currentLevel >= result.minLevel && result.weather == YrRetriever.Weather.FAIR) {
     			outputText.setText(R.string.output_go);
     			outputText.setTextColor(getResources().getColor(R.color.go));
     			explanationText.setText(getString(R.string.explanation_go, result.currentLevel));
+    		} else if(result.currentLevel < result.minLevel) {
+    			outputText.setText(R.string.output_stay);
+    			outputText.setTextColor(getResources().getColor(R.color.stay));
+    			explanationText.setText(getString(R.string.explanation_stay_level, result.currentLevel));
     		} else {
     			outputText.setText(R.string.output_stay);
     			outputText.setTextColor(getResources().getColor(R.color.stay));
-    			explanationText.setText(getString(R.string.explanation_stay, result.currentLevel));
+    			explanationText.setText(getString(R.string.explanation_stay_cloudy, result.currentLevel));
     		}
     	}
     }
