@@ -23,10 +23,13 @@ public class YrRetriever {
 	
 	public static Weather retrieveWeather(String country, String region, String city) {		
 		String url = "http://www.yr.no/place/" + country + "/" + region + "/" + city;
+		Log.d("YrRetriever", "url = " + url);
 		Document doc;
 		try {
 			doc = Jsoup.connect(url).get();
-			Element img = doc.select("table[class=yr-table yr-table-overview2 yr-popup-area]:first-child > tbody > tr > td:eq(1) > img").last();
+			String selectStr = "table[class=yr-table yr-table-overview2 yr-popup-area]:first-child > tbody > tr > td:eq(1) > img";
+			Log.d("YrRetriever", "selectStr = " + selectStr);
+			Element img = doc.select(selectStr).last();
 			String weatherStr = img.attr("alt");
 			if(weatherStr.equals("Cloudy")) {
 				return Weather.CLOUDY;

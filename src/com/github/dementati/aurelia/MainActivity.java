@@ -92,18 +92,30 @@ public class MainActivity extends ActionBarActivity {
     		TextView outputText = (TextView)findViewById(R.id.output);
     		TextView explanationText = (TextView)findViewById(R.id.explanation);
     		
-    		if(result.currentLevel >= result.minLevel && result.weather == YrRetriever.Weather.FAIR) {
-    			outputText.setText(R.string.output_go);
-    			outputText.setTextColor(getResources().getColor(R.color.go));
-    			explanationText.setText(getString(R.string.explanation_go, result.currentLevel));
-    		} else if(result.currentLevel < result.minLevel) {
-    			outputText.setText(R.string.output_stay);
-    			outputText.setTextColor(getResources().getColor(R.color.stay));
-    			explanationText.setText(getString(R.string.explanation_stay_level, result.currentLevel));
+    		if(result.currentLevel >= result.minLevel) {
+    			switch(result.weather) {
+    				case FAIR: 
+		    			outputText.setText(R.string.output_go);
+		    			outputText.setTextColor(getResources().getColor(R.color.go));
+		    			explanationText.setText(getString(R.string.explanation_go_fair, result.currentLevel));
+		    			break;
+		    			
+    				case PARTLY_CLOUDY:
+    					outputText.setText(R.string.output_go);
+		    			outputText.setTextColor(getResources().getColor(R.color.go));
+		    			explanationText.setText(getString(R.string.explanation_go_partly_cloudy, result.currentLevel));
+		    			break;
+		    			
+		    		default:
+		    			outputText.setText(R.string.output_stay);
+		    			outputText.setTextColor(getResources().getColor(R.color.stay));
+		    			explanationText.setText(getString(R.string.explanation_stay_cloudy, result.currentLevel));
+		    			break;
+    			}
     		} else {
     			outputText.setText(R.string.output_stay);
     			outputText.setTextColor(getResources().getColor(R.color.stay));
-    			explanationText.setText(getString(R.string.explanation_stay_cloudy, result.currentLevel));
+    			explanationText.setText(getString(R.string.explanation_stay_level, result.currentLevel));
     		}
     	}
     }
