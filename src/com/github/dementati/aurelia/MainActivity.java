@@ -49,9 +49,11 @@ public class MainActivity extends ActionBarActivity {
     }
     
     public void update() {
-    	TextView textView = (TextView)findViewById(R.id.output);
-    	textView.setText(R.string.output_neutral);
-		textView.setTextColor(getResources().getColor(R.color.neutral));
+    	TextView outputText = (TextView)findViewById(R.id.output);
+    	TextView explanationText = (TextView)findViewById(R.id.explanation);
+    	outputText.setText(R.string.output_neutral);
+		outputText.setTextColor(getResources().getColor(R.color.neutral));
+		explanationText.setText("");
     	
     	new DataRetrievalTask().execute();
     }
@@ -61,27 +63,38 @@ public class MainActivity extends ActionBarActivity {
     	startActivity(intent);
     }
     
-    private class DataRetrievalTask extends AsyncTask<Void, Void, Boolean> {
+    private class DataRetrievalResult {
+		int currentLevel;
+		int minLevel; 
+	}
+    
+    private class DataRetrievalTask extends AsyncTask<Void, Void, DataRetrievalResult> {
+    	
+    	
     	@Override
-    	protected Boolean doInBackground(Void... params) {
-    		int currentLevel = GeophysInstRetriever.retrieveLevel();
+    	protected DataRetrievalResult doInBackground(Void... params) {
+    		DataRetrievalResult result = new DataRetrievalResult();
+    		result.currentLevel = GeophysInstRetriever.retrieveLevel();
     		
     		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-    		int minLevel = pref.getInt("pref_level", 2);
+    		result.minLevel = pref.getInt("pref_level", 2);
     		
-    		return Boolean.valueOf(currentLevel >= minLevel);
+    		return result;
     	}
     	
     	@Override
-    	protected void onPostExecute(Boolean result) {
-    		TextView textView = (TextView)findViewById(R.id.output);
+    	protected void onPostExecute(DataRetrievalResult result) {
+    		TextView outputText = (TextView)findViewById(R.id.output);
+    		TextView explanationText = (TextView)findViewById(R.id.explanation);
     		
-    		if(result.booleanValue()) {
-    			textView.setText(R.string.output_go);
-    			textView.setTextColor(getResources().getColor(R.color.go));
+    		if(result.currentLevel >= result.minLevel) {
+    			outputText.setText(R.string.output_go);
+    			outputText.setTextColor(getResources().getColor(R.color.go));
+    			explanationText.setText(getString(R.string.explanation_go, result.currentLevel));
     		} else {
-    			textView.setText(R.string.output_stay);
-    			textView.setTextColor(getResources().getColor(R.color.stay));
+    			outputText.setText(R.string.output_stay);
+    			outputText.setTextColor(getResources().getColor(R.color.stay));
+    			explanationText.setText(getString(R.string.explanation_stay, result.currentLevel));
     		}
     	}
     }

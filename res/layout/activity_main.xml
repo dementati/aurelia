@@ -18,4 +18,12 @@
         android:text="@string/output_neutral"
         android:color="@color/neutral" />
 
+    <TextView
+        android:id="@+id/explanation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/output"
+        android:layout_centerHorizontal="true"
+        android:text="" />
+
 </RelativeLayout>
