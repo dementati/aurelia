@@ -18,7 +18,7 @@ public class YrRetrieverTest extends TestCase {
 		String region = "Västerbotten";
 		String city = "Umeå";
 		
-		assertEquals(YrRetriever.Weather.PARTLY_CLOUDY, YrRetriever.retrieveWeather(country, region, city));
+		assertEquals(YrRetriever.Weather.CLOUDY, YrRetriever.retrieveWeather(country, region, city));
 	}
 	
 	public void testRetrieveWeatherSaoPaulo() {

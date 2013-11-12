@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
     		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
     		result.minLevel = pref.getInt("pref_level", 2);
     		
-    		result.weather = YrRetriever.retrieveWeather("Sweden", "Västerbotten", "Umeå");
+    		result.weather = YrRetriever.retrieveWeather("Sweden", "V%C3%A4sterbotten", "Ume%C3%A5");
     		
     		return result;
     	}
