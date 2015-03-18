@@ -6,8 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import android.util.Log;
-
 public class YrRetriever {
 	public enum Weather {
 		CLOUDY,

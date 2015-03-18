@@ -15,9 +15,7 @@ public class GeophysInstRetriever {
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		
-		Log.i("GeophysInstRetriever", "retrieveLevel(" + year + ", " + month + ", " + day + ")");
-		
-		String url = "http://www.gi.alaska.edu/AuroraForecast/Europe/" + year + "/" + month + "/" + day;
+		String url = "http://auroraforecast.gi.alaska.edu";
 		Document doc;
 		try {
 			doc = Jsoup.connect(url).get();

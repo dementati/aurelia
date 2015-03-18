@@ -1,7 +1,5 @@
 package com.github.dementati.aurelia;
 
-import com.github.dementati.aurelia.YrRetriever.Weather;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
