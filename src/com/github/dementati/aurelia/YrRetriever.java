@@ -18,10 +18,8 @@ public class YrRetriever {
 		RAIN_SHOWERS,
 		UNKNOWN
 	}
-	
-	public static Weather retrieveWeather(String country, String region, String city) {		
-		String url = "http://m.yr.no/place/" + country + "/" + region + "/" + city;
-		//Log.i("YrRetriever", "url = " + url);
+
+	private static String getWeatherStr(String url) {
 		Document doc;
 		try {
 			doc = Jsoup.connect(url).get();
@@ -30,31 +28,62 @@ public class YrRetriever {
 			selectStr = "body > div:eq(3) > table > tbody > tr:last-child > td > img";
 			//Log.i("YrRetriever", "selectStr = " + selectStr);
 			Element img = doc.select(selectStr).first();
-			String weatherStr = img.attr("alt");
-			if(weatherStr.equals("Cloudy")) {
-				return Weather.CLOUDY;
-			} else if(weatherStr.equals("Partly cloudy")) {
-				return Weather.PARTLY_CLOUDY;
-			} else if(weatherStr.equals("Heavy rain")) {
-				return Weather.HEAVY_RAIN;
-			} else if(weatherStr.equals("Rain")) {
-				return Weather.RAIN;
-			} else if(weatherStr.equals("Sleet")) {
-				return Weather.SLEET;
-			} else if(weatherStr.equals("Fair")) {
-				return Weather.FAIR;
-			} else if(weatherStr.equals("Snow")) {
-				return Weather.SNOW;
-			} else if(weatherStr.equals("Rain showers")) {
-				return Weather.RAIN_SHOWERS;
+			
+			if(img != null) {
+				return img.attr("alt");
 			} else {
-				return Weather.UNKNOWN;
+				return getTomorrowsWeatherStr(url);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return Weather.UNKNOWN;
+		return null;
+	}
+	
+	private static String getTomorrowsWeatherStr(String url) {
+		url = url + "/hour_by_hour_tomorrow.html";
+		
+		Document doc;
+		try {
+			doc = Jsoup.connect(url).get();
+			
+			String selectStr = "body > div:eq(3) > table > tbody > tr:last-child > td:first-child > img";
+			selectStr = "body > div:eq(3) > table > tbody > tr:last-child > td > img";
+			//Log.i("YrRetriever", "selectStr = " + selectStr);
+			Element img = doc.select(selectStr).first();
+			return img.attr("alt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static Weather retrieveWeather(String country, String region, String city) {		
+		String url = "http://m.yr.no/place/" + country + "/" + region + "/" + city;
+
+        String weatherStr = getWeatherStr(url);
+        if(weatherStr.equals("Cloudy")) {
+			return Weather.CLOUDY;
+        } else if(weatherStr.equals("Partly cloudy")) {
+			return Weather.PARTLY_CLOUDY;
+        } else if(weatherStr.equals("Heavy rain")) {
+			return Weather.HEAVY_RAIN;
+        } else if(weatherStr.equals("Rain")) {
+			return Weather.RAIN;
+        } else if(weatherStr.equals("Sleet")) {
+			return Weather.SLEET;
+        } else if(weatherStr.equals("Fair")) {
+			return Weather.FAIR;
+        } else if(weatherStr.equals("Snow")) {
+			return Weather.SNOW;
+        } else if(weatherStr.equals("Rain showers")) {
+        	return Weather.RAIN_SHOWERS;
+        } else {
+        	return Weather.UNKNOWN;
+        }
 	}
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
+	private AuroraLevelRetriever levelRetriever = new AuroraLevelAggregator();
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
     }
     
     private class DataRetrievalResult {
-		int currentLevel;
+		double currentLevel;
 		int minLevel; 
 		YrRetriever.Weather weather;
 	}
@@ -75,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
     	@Override
     	protected DataRetrievalResult doInBackground(Void... params) {
     		DataRetrievalResult result = new DataRetrievalResult();
-    		result.currentLevel = GeophysInstRetriever.retrieveLevel();
+    		result.currentLevel = levelRetriever.retrieveLevel();
     		
     		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
     		result.minLevel = pref.getInt("pref_level", 2);
@@ -104,10 +105,31 @@ public class MainActivity extends ActionBarActivity {
 		    			explanationText.setText(getString(R.string.explanation_go_partly_cloudy, result.currentLevel));
 		    			break;
 		    			
-		    		default:
-		    			outputText.setText(R.string.output_stay);
-		    			outputText.setTextColor(getResources().getColor(R.color.stay));
+    				case HEAVY_RAIN:
+    				case RAIN_SHOWERS:
+    				case RAIN:
+    					outputText.setText(R.string.output_stay);
+		    			outputText.setTextColor(getResources().getColor(R.color.go));
+		    			explanationText.setText(getString(R.string.explanation_stay_rainy, result.currentLevel));
+		    			break;
+		    		
+    				case SLEET:
+    				case SNOW:
+    					outputText.setText(R.string.output_stay);
+		    			outputText.setTextColor(getResources().getColor(R.color.go));
+		    			explanationText.setText(getString(R.string.explanation_stay_snow, result.currentLevel));
+		    			break;
+		    			
+    				case CLOUDY:
+                        outputText.setText(R.string.output_stay);
+		    			outputText.setTextColor(getResources().getColor(R.color.go));
 		    			explanationText.setText(getString(R.string.explanation_stay_cloudy, result.currentLevel));
+    					break;
+		    			
+		    		default:
+		    			outputText.setText(R.string.output_confused);
+		    			outputText.setTextColor(getResources().getColor(R.color.stay));
+		    			explanationText.setText(getString(R.string.explanation_confused, result.currentLevel));
 		    			break;
     			}
     		} else {

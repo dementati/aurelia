@@ -1,16 +1,29 @@
 package com.github.dementati.aurelia.test;
 
+import java.util.Arrays;
+
 import com.github.dementati.aurelia.YrRetriever;
 
 import junit.framework.TestCase;
 
 public class YrRetrieverTest extends TestCase {
+	private static YrRetriever.Weather[] weathers = new YrRetriever.Weather[] {
+		YrRetriever.Weather.CLOUDY,
+		YrRetriever.Weather.FAIR,
+		YrRetriever.Weather.HEAVY_RAIN,
+		YrRetriever.Weather.PARTLY_CLOUDY,
+		YrRetriever.Weather.RAIN,
+		YrRetriever.Weather.RAIN_SHOWERS,
+		YrRetriever.Weather.SLEET,
+		YrRetriever.Weather.SNOW
+	};
+	
 	public void testRetrieveWeatherCopenhagen() {
 		String country = "Denmark";
 		String region = "Capital";
 		String city = "Copenhagen";
 		
-		assertEquals(YrRetriever.Weather.CLOUDY, YrRetriever.retrieveWeather(country, region, city));
+		assertTrue(Arrays.asList(weathers).contains(YrRetriever.retrieveWeather(country, region, city)));
 	}
 	
 	public void testRetrieveWeatherUmea() {
@@ -18,7 +31,7 @@ public class YrRetrieverTest extends TestCase {
 		String region = "Västerbotten";
 		String city = "Umeå";
 		
-		assertEquals(YrRetriever.Weather.CLOUDY, YrRetriever.retrieveWeather(country, region, city));
+		assertTrue(Arrays.asList(weathers).contains(YrRetriever.retrieveWeather(country, region, city)));
 	}
 	
 	public void testRetrieveWeatherSaoPaulo() {
@@ -26,6 +39,6 @@ public class YrRetrieverTest extends TestCase {
 		String region = "São_Paulo";
 		String city = "São_Paulo";
 		
-		assertEquals(YrRetriever.Weather.PARTLY_CLOUDY, YrRetriever.retrieveWeather(country, region, city));
+		assertTrue(Arrays.asList(weathers).contains(YrRetriever.retrieveWeather(country, region, city)));
 	}
 }
