@@ -18,7 +18,7 @@ public class GeophysInstRetriever implements AuroraLevelRetriever {
 			doc = Jsoup.connect(url).get();
 			Elements spans = doc.select(".main .levels>span");
 			if(spans.size() == 0) {
-				return -1;
+				return NO_LEVEL;
 			} else {
 				return Double.parseDouble(spans.get(1).text());
 			}
@@ -27,6 +27,6 @@ public class GeophysInstRetriever implements AuroraLevelRetriever {
 			e.printStackTrace();
 		}
 		
-		return -1;
+		return NO_LEVEL;
 	}
 }

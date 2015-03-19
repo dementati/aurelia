@@ -15,7 +15,7 @@ public class AuroraServiceEuRetriever implements AuroraLevelRetriever {
 			doc = Jsoup.connect(url).get();
 			Elements spans = doc.select("#hourly>h4>span");
 			if(spans.size() == 0) {
-				return -1.0;
+				return NO_LEVEL;
 			} else {
 				String raw = spans.get(0).text();
 				raw = raw.replace("Kp ", "");
@@ -26,6 +26,6 @@ public class AuroraServiceEuRetriever implements AuroraLevelRetriever {
 			e.printStackTrace();
 		}
 		
-		return -1.0;
+		return NO_LEVEL;
 	}
 }
