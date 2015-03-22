@@ -1,6 +1,6 @@
 package com.github.dementati.aurelia;
 
-import com.github.dementati.aurelia.DataRetriever.DataRetrievalResult;
+import com.github.dementati.aurelia.AuroraStatusRetriever.AuroraStatus;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity {
 	private static final int ALARM_INTERVAL = 30000;
 	
-	DataRetriever retriever = new DataRetriever();
+	AuroraStatusRetriever retriever = new AuroraStatusRetriever();
 	AlarmManager manager;
 	PendingIntent pendingIntent;
 	
@@ -76,12 +76,14 @@ public class MainActivity extends ActionBarActivity {
     public void update() {
     	TextView outputText = (TextView)findViewById(R.id.output);
     	TextView explanationText = (TextView)findViewById(R.id.explanation);
-    	outputText.setText(R.string.output_neutral);
+    	outputText.setText(R.string.output_loading);
 		outputText.setTextColor(getResources().getColor(R.color.neutral));
 		explanationText.setText("");
-   
-
-    	new DataRetrievalTask().execute();
+		
+	    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+		int minLevel = pref.getInt("pref_level", 2);
+		
+    	new StatusRetrievalTask(minLevel).execute();
     }
     
     public void openSettings() {
@@ -89,65 +91,29 @@ public class MainActivity extends ActionBarActivity {
     	startActivity(intent);
     }
     
-    private void updateUi(DataRetrievalResult result) {
-	    
-	    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-		int minLevel = pref.getInt("pref_level", 2);
-
-		if(result.currentLevel == AuroraLevelRetriever.NO_LEVEL) {
-		    setState(R.string.output_neutral, R.color.neutral, R.string.explanation_confused, result.currentLevel);
-		}
-		else if(result.currentLevel >= minLevel) {
-		    switch(result.weather) {
-			    case FAIR: 
-				    setState(R.string.output_go, R.color.go, R.string.explanation_go_fair, result.currentLevel);
-				    break;
-				    
-			    case PARTLY_CLOUDY:
-				    setState(R.string.output_go, R.color.go, R.string.explanation_go_partly_cloudy, result.currentLevel);
-				    break;
-				    
-			    case HEAVY_RAIN:
-			    case RAIN_SHOWERS:
-			    case RAIN:
-				    setState(R.string.output_stay, R.color.stay, R.string.explanation_stay_rainy, result.currentLevel);
-				    break;
-			    
-			    case SLEET:
-			    case SNOW:
-				    setState(R.string.output_stay, R.color.stay, R.string.explanation_stay_snow, result.currentLevel);
-				    break;
-				    
-			    case CLOUDY:
-				    setState(R.string.output_stay, R.color.stay, R.string.explanation_stay_cloudy, result.currentLevel);
-				    break;
-				    
-			    default:
-				    setState(R.string.output_neutral, R.color.neutral, R.string.explanation_confused, result.currentLevel);
-				    break;
-		    }
-	    } else {
-		    setState(R.string.output_stay, R.color.stay, R.string.explanation_stay_level, result.currentLevel);
-	    }
-    }
-    
-    private void setState(int text, int color, int explanation, double level) {
+    private void setState(AuroraStatus status) {
     	TextView outputText = (TextView)findViewById(R.id.output);
 	    TextView explanationText = (TextView)findViewById(R.id.explanation);
-    	outputText.setText(text);
-	    outputText.setTextColor(getResources().getColor(color));
-	    explanationText.setText(getString(explanation, level));
+    	outputText.setText(status.text);
+	    outputText.setTextColor(getResources().getColor(status.color));
+	    explanationText.setText(getString(status.explanation, status.level));
     }
     
-    private class DataRetrievalTask extends AsyncTask<Void, Void, DataRetrievalResult> {
-    	@Override
-    	protected DataRetrievalResult doInBackground(Void... params) {
-    		return retriever.retrieve();
+    private class StatusRetrievalTask extends AsyncTask<Void, Void, AuroraStatus> {
+    	private int minLevel;
+    	
+    	public StatusRetrievalTask(int minLevel) {
+    		this.minLevel = minLevel;
     	}
     	
     	@Override
-    	protected void onPostExecute(DataRetrievalResult result) {
-    		updateUi(result);
+    	protected AuroraStatus doInBackground(Void... params) {
+    		return retriever.retrieve(minLevel);
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(AuroraStatus result) {
+    		setState(result);
     	}
     }
     

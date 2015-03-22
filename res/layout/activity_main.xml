@@ -15,7 +15,7 @@
         android:textSize="@dimen/output_size"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/output_neutral"
+        android:text="@string/output_loading"
         android:color="@color/neutral" />
 
     <TextView

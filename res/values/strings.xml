@@ -5,7 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pref_level">Minimum level</string>
-    <string name="output_neutral">Loading&#8230;</string>
+    <string name="output_loading">Loading&#8230;</string>
+    <string name="output_confused">???</string>
     <string name="output_go">Go</string>
     <string name="output_stay">Stay</string>
     <string name="output_confused">\?\?\?</string>
