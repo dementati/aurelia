@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
 	private static final int ALARM_INTERVAL = 30000;
+	private static final int VIBRATE_DURATION = 500;
 	
 	AuroraStatusRetriever retriever = new AuroraStatusRetriever();
 	AlarmManager manager;
@@ -97,6 +99,11 @@ public class MainActivity extends ActionBarActivity {
     	outputText.setText(status.text);
 	    outputText.setTextColor(getResources().getColor(status.color));
 	    explanationText.setText(getString(status.explanation, status.level));
+	    
+	    if(status.notify) {
+	    	Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+	    	vibrator.vibrate(VIBRATE_DURATION);
+	    }
     }
     
     private class StatusRetrievalTask extends AsyncTask<Void, Void, AuroraStatus> {

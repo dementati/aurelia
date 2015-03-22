@@ -1,4 +1,4 @@
-package com.github.dementati.aurelia;
+package com.github.dementati.aurelia.levelretriever;
 
 import java.io.IOException;
 
@@ -6,7 +6,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-public class GeophysInstRetriever implements AuroraLevelRetriever {	
+
+public class GeophysInstRetriever implements LevelRetriever {	
 	/* (non-Javadoc)
 	 * @see com.github.dementati.aurelia.AuroraLevelRetriever#retrieveLevel()
 	 */

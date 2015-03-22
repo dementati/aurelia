@@ -1,6 +1,6 @@
 package com.github.dementati.aurelia.test;
 
-import com.github.dementati.aurelia.AuroraServiceEuRetriever;
+import com.github.dementati.aurelia.levelretriever.AuroraServiceEuRetriever;
 
 import junit.framework.TestCase;
 

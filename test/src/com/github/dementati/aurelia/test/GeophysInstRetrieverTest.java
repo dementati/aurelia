@@ -1,6 +1,6 @@
 package com.github.dementati.aurelia.test;
 
-import com.github.dementati.aurelia.GeophysInstRetriever;
+import com.github.dementati.aurelia.levelretriever.GeophysInstRetriever;
 
 import junit.framework.TestCase;
 

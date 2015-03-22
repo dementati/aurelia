@@ -253,6 +253,68 @@ public class AuroraStatusRetrieverTest extends TestCase {
 			assertEquals("Invalid minimum level", e.getMessage());
 		}
 	}
+
+	public void testNotifyWithInitialPositiveStatus() {
+		double currentLevel = 2.0;
+		Weather weather = Weather.FAIR;
+		int minLevel = 2;
+		AuroraStatusRetriever retriever = getTestRetriever(currentLevel, weather);
+		AuroraStatus status = retriever.retrieve(minLevel);
+	
+		assertTrue(status.notify);
+	}
+	
+	public void testNotifyWhenLevelImproves() {
+		double firstCurrentLevel = 1.0;
+		double secondCurrentLevel = 2.0;
+		Weather weather = Weather.FAIR;
+		int minLevel = 2;
+		AuroraStatusRetriever retriever = getTwoStepTestRetriever(firstCurrentLevel, weather, secondCurrentLevel, weather);
+		AuroraStatus firstStatus = retriever.retrieve(minLevel);
+		AuroraStatus secondStatus = retriever.retrieve(minLevel);
+	
+		assertFalse(firstStatus.notify);
+		assertTrue(secondStatus.notify);
+	}
+	
+	public void testNotifyWhenLevelDeclines() {
+		double firstCurrentLevel = 2.0;
+		double secondCurrentLevel = 1.0;
+		Weather weather = Weather.FAIR;
+		int minLevel = 2;
+		AuroraStatusRetriever retriever = getTwoStepTestRetriever(firstCurrentLevel, weather, secondCurrentLevel, weather);
+		AuroraStatus firstStatus = retriever.retrieve(minLevel);
+		AuroraStatus secondStatus = retriever.retrieve(minLevel);
+	
+		assertTrue(firstStatus.notify);
+		assertFalse(secondStatus.notify);
+	}
+	
+	public void testNotifyWhenWeatherImproves() {
+		double currentLevel = 2.0;
+		Weather firstWeather = Weather.CLOUDY;
+		Weather secondWeather = Weather.FAIR;
+		int minLevel = 2;
+		AuroraStatusRetriever retriever = getTwoStepTestRetriever(currentLevel, firstWeather, currentLevel, secondWeather);
+		AuroraStatus firstStatus = retriever.retrieve(minLevel);
+		AuroraStatus secondStatus = retriever.retrieve(minLevel);
+	
+		assertFalse(firstStatus.notify);
+		assertTrue(secondStatus.notify);
+	}
+	
+	public void testNotifyWhenWeatherDeclines() {
+		double currentLevel = 2.0;
+		Weather firstWeather = Weather.FAIR;
+		Weather secondWeather = Weather.CLOUDY;
+		int minLevel = 2;
+		AuroraStatusRetriever retriever = getTwoStepTestRetriever(currentLevel, firstWeather, currentLevel, secondWeather);
+		AuroraStatus firstStatus = retriever.retrieve(minLevel);
+		AuroraStatus secondStatus = retriever.retrieve(minLevel);
+	
+		assertTrue(firstStatus.notify);
+		assertFalse(secondStatus.notify);
+	}
 	
 	private AuroraStatusRetriever getTestRetriever(double currentLevel, Weather weather) {
 		final double finalCurrentLevel = currentLevel;
@@ -261,6 +323,35 @@ public class AuroraStatusRetrieverTest extends TestCase {
 			@Override
 			public DataRetrievalResult retrieve() {
 				return new DataRetrievalResult(finalCurrentLevel, finalWeather);
+			}
+		});
+	}
+	
+	private AuroraStatusRetriever getTwoStepTestRetriever(double firstCurrentLevel, Weather firstWeather, 
+			double secondCurrentLevel, Weather secondWeather) {
+
+		final double finalFirstCurrentLevel = firstCurrentLevel;
+		final Weather finalFirstWeather = firstWeather;
+		final double finalSecondCurrentLevel = secondCurrentLevel; 
+		final Weather finalSecondWeather = secondWeather;
+		return new AuroraStatusRetriever(new DataRetriever() {
+			private int callCount = 0;
+			@Override
+			public DataRetrievalResult retrieve() {
+				if(callCount > 1) {
+					System.err.println("Called too many times");
+					System.exit(1);
+				}
+				
+				if(callCount == 0) {
+					callCount++;
+					return new DataRetrievalResult(finalFirstCurrentLevel, finalFirstWeather);
+				} else if(callCount == 1) {
+					callCount++;
+					return new DataRetrievalResult(finalSecondCurrentLevel, finalSecondWeather);
+				}
+				
+				return null;
 			}
 		});
 	}

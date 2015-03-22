@@ -3,6 +3,7 @@ package com.github.dementati.aurelia;
 
 public class AuroraStatusRetriever {
 	private DataRetriever dataRetriever;
+	private AuroraStatus lastStatus;
 	
 	public AuroraStatusRetriever() {
 		this.dataRetriever = new DataRetrieverImpl();
@@ -80,8 +81,19 @@ public class AuroraStatusRetriever {
 			result.explanation = R.string.explanation_stay_level;
 			result.level = data.currentLevel;
 	    }
-		
+	
+		result.notify = shouldNotify(result);
+		lastStatus = result;
 		return result;
+	}
+	
+	public boolean shouldNotify(AuroraStatus newStatus) {
+		if(lastStatus == null) {
+			return newStatus.color == R.color.go;
+		} else {
+			return (lastStatus.color == R.color.stay || lastStatus.color == R.color.neutral)
+				&& newStatus.color == R.color.go;
+		}
 	}
 	
 	public class AuroraStatus {
@@ -89,5 +101,6 @@ public class AuroraStatusRetriever {
 		public int color;
 		public int explanation;
 		public double level;
+		public boolean notify;
 	}
 }

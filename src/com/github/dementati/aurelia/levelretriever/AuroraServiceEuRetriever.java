@@ -1,4 +1,4 @@
-package com.github.dementati.aurelia;
+package com.github.dementati.aurelia.levelretriever;
 
 import java.io.IOException;
 
@@ -6,7 +6,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-public class AuroraServiceEuRetriever implements AuroraLevelRetriever {	
+
+public class AuroraServiceEuRetriever implements LevelRetriever {	
 	@Override
 	public double retrieveLevel() {
 		String url = "http://www.aurora-service.eu/aurora-forecast";

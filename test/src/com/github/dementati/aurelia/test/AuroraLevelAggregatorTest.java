@@ -1,30 +1,30 @@
 package com.github.dementati.aurelia.test;
 
-import com.github.dementati.aurelia.AuroraLevelAggregator;
-import com.github.dementati.aurelia.AuroraLevelRetriever;
-import com.github.dementati.aurelia.AuroraServiceEuRetriever;
-import com.github.dementati.aurelia.GeophysInstRetriever;
+import com.github.dementati.aurelia.levelretriever.AuroraServiceEuRetriever;
+import com.github.dementati.aurelia.levelretriever.GeophysInstRetriever;
+import com.github.dementati.aurelia.levelretriever.LevelAggregator;
+import com.github.dementati.aurelia.levelretriever.LevelRetriever;
 
 import junit.framework.TestCase;
 
 public class AuroraLevelAggregatorTest extends TestCase {
 	public void testAggregation() {
-		AuroraLevelAggregator aggregator = new AuroraLevelAggregator();
-		aggregator.addRetriever(new AuroraLevelRetriever() {
+		LevelAggregator aggregator = new LevelAggregator();
+		aggregator.addRetriever(new LevelRetriever() {
 			@Override
 			public double retrieveLevel() {
 				// TODO Auto-generated method stub
 				return 2;
 			}
 		});
-		aggregator.addRetriever(new AuroraLevelRetriever() {
+		aggregator.addRetriever(new LevelRetriever() {
 			@Override
 			public double retrieveLevel() {
 				// TODO Auto-generated method stub
 				return 3;
 			}
 		});
-		aggregator.addRetriever(new AuroraLevelRetriever() {
+		aggregator.addRetriever(new LevelRetriever() {
 			@Override
 			public double retrieveLevel() {
 				// TODO Auto-generated method stub
@@ -36,11 +36,11 @@ public class AuroraLevelAggregatorTest extends TestCase {
 	}
 	
 	public void testLive() {
-		AuroraLevelAggregator aggregator = new AuroraLevelAggregator();
+		LevelAggregator aggregator = new LevelAggregator();
 		aggregator.addRetriever(new GeophysInstRetriever());
 		aggregator.addRetriever(new AuroraServiceEuRetriever());
 		
 		double level = aggregator.retrieveLevel();
-		assertTrue((0 <= level && level <= 9) || level == AuroraLevelRetriever.NO_LEVEL);
+		assertTrue((0 <= level && level <= 9) || level == LevelRetriever.NO_LEVEL);
 	}
 }

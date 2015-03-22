@@ -1,11 +1,12 @@
-package com.github.dementati.aurelia;
+package com.github.dementati.aurelia.levelretriever;
 
 import java.util.ArrayList;
 
-public class AuroraLevelAggregator implements AuroraLevelRetriever {
-	private ArrayList<AuroraLevelRetriever> retrievers = new ArrayList<AuroraLevelRetriever>();
 
-	public void addRetriever(AuroraLevelRetriever retriever) {
+public class LevelAggregator implements LevelRetriever {
+	private ArrayList<LevelRetriever> retrievers = new ArrayList<LevelRetriever>();
+
+	public void addRetriever(LevelRetriever retriever) {
 		retrievers.add(retriever);
 	}
 	
@@ -13,7 +14,7 @@ public class AuroraLevelAggregator implements AuroraLevelRetriever {
 	public double retrieveLevel() {
 		double sum = 0;
 		int retrieverCount = 0;
-		for(AuroraLevelRetriever retriever : retrievers) {
+		for(LevelRetriever retriever : retrievers) {
 			double level = retriever.retrieveLevel();
 			if(level != NO_LEVEL) {
 				retrieverCount++;
