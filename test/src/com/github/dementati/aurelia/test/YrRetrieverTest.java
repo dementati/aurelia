@@ -15,14 +15,15 @@ public class YrRetrieverTest extends TestCase {
 		YrRetriever.Weather.RAIN,
 		YrRetriever.Weather.RAIN_SHOWERS,
 		YrRetriever.Weather.SLEET,
-		YrRetriever.Weather.SNOW
+		YrRetriever.Weather.SNOW,
+		YrRetriever.Weather.LIGHT_SNOW
 	};
 	
 	public void testRetrieveWeatherCopenhagen() {
 		String country = "Denmark";
 		String region = "Capital";
 		String city = "Copenhagen";
-		
+
 		assertTrue(Arrays.asList(weathers).contains(YrRetriever.retrieveWeather(country, region, city)));
 	}
 	

@@ -146,6 +146,17 @@ public class AuroraStatusRetrieverTest extends TestCase {
 		assertEquals(currentLevel, status.level);
 	}
 	
+	public void testHighLevelLightSnow() {
+		double currentLevel = DEFAULT_MIN_LEVEL + 1;
+		AuroraStatusRetriever retriever = getTestRetriever(currentLevel, Weather.LIGHT_SNOW);
+		AuroraStatus status = retriever.retrieve(DEFAULT_MIN_LEVEL);
+		
+		assertEquals(R.string.output_stay, status.text);
+		assertEquals(R.color.stay, status.color);
+		assertEquals(R.string.explanation_stay_snow, status.explanation);
+		assertEquals(currentLevel, status.level);
+	}
+	
 	public void testNoLevelUnknownWeather() {
 		double currentLevel = LevelRetriever.NO_LEVEL;
 		AuroraStatusRetriever retriever = getTestRetriever(currentLevel, Weather.UNKNOWN);

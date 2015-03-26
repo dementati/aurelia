@@ -57,6 +57,7 @@ public class AuroraStatusRetriever {
 					result.level = data.currentLevel;
 				    break;
 			    
+			    case LIGHT_SNOW:
 			    case SLEET:
 			    case SNOW:
 					result.text = R.string.output_stay;

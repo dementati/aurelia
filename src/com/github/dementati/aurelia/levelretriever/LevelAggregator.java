@@ -21,7 +21,7 @@ public class LevelAggregator implements LevelRetriever {
 			double level = retriever.retrieveLevel();
 			if(level != NO_LEVEL) {
 				retrieverCount++;
-				sum += retriever.retrieveLevel();
+				sum += level;
 			}
 		}
 		

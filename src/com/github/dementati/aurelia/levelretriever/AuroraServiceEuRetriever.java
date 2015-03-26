@@ -33,10 +33,10 @@ public class AuroraServiceEuRetriever implements LevelRetriever {
 			}
 		} 
 		catch (SocketTimeoutException e) {
-		    Log.e(this.getClass().getName(), "Couldn't retrieve page from " + url + ", socket timed out.");
+		    Log.e(this.getClass().getSimpleName(), "Couldn't retrieve page from " + url + ", socket timed out.");
 		} 
 		catch (IOException e) {
-		    Log.e(this.getClass().getName(), "Couldn't retrieve page from " + url + ", unspecified I/O error.");
+		    Log.e(this.getClass().getSimpleName(), "Couldn't retrieve page from " + url + ", unspecified I/O error.");
 		}
 	
 		return NO_LEVEL;

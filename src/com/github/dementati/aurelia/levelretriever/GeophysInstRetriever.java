@@ -1,6 +1,7 @@
 package com.github.dementati.aurelia.levelretriever;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,9 +30,14 @@ public class GeophysInstRetriever implements LevelRetriever {
                 Log.v(this.getClass().getSimpleName(), "Retrieved level " + level);
 				return level;
 			}
-		} catch (IOException e) {
-            Log.e(this.getClass().getName(), e.getMessage());
-			return NO_LEVEL;
+		} 
+		catch (SocketTimeoutException e) {
+		    Log.e(this.getClass().getSimpleName(), "Couldn't retrieve page from " + url + ", socket timed out.");
+		} 
+		catch (IOException e) {
+		    Log.e(this.getClass().getSimpleName(), "Couldn't retrieve page from " + url + ", unspecified I/O error.");
 		}
+		
+		return NO_LEVEL;
 	}
 }

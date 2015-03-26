@@ -17,6 +17,7 @@ public class YrRetriever {
 		SLEET,
 		FAIR,
 		SNOW,
+		LIGHT_SNOW,
 		RAIN_SHOWERS,
 		UNKNOWN
 	}
@@ -98,6 +99,8 @@ public class YrRetriever {
 			weather = Weather.FAIR;
         } else if(weatherStr.equals("Snow")) {
 			weather = Weather.SNOW;
+        } else if(weatherStr.equals("Light snow")) {
+        	weather = Weather.LIGHT_SNOW;
         } else if(weatherStr.equals("Rain showers")) {
         	weather = Weather.RAIN_SHOWERS;
         } else {

@@ -62,13 +62,6 @@ public class MainActivity extends ActionBarActivity {
     	}
     }  
     
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	
-    	update();
-    }
-    
     public void startAlarm() {
     	Log.v(getClass().getSimpleName(), "Starting alarm");
     	
