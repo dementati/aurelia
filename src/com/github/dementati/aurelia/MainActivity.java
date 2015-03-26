@@ -31,16 +31,16 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         
+        Log.v(getClass().getSimpleName(), "Initializing main activity...");
+        
+        setContentView(R.layout.activity_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         this.registerReceiver(new AlarmReceiver(), new IntentFilter("com.github.dementati.aurelia.RETRIEVE_DATA"));
-        
         Intent alarmIntent = new Intent("com.github.dementati.aurelia.RETRIEVE_DATA");
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         startAlarm();
-        Log.i("MainActivity", "onCreate called");
     }
 
     @Override
@@ -70,12 +70,16 @@ public class MainActivity extends ActionBarActivity {
     }
     
     public void startAlarm() {
+    	Log.v(getClass().getSimpleName(), "Starting alarm");
+    	
     	manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
     	manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 
     			ALARM_INTERVAL, pendingIntent);
     }
     
     public void update() {
+    	Log.v(getClass().getSimpleName(), "Initiating status update");
+    	
     	TextView outputText = (TextView)findViewById(R.id.output);
     	TextView explanationText = (TextView)findViewById(R.id.explanation);
     	outputText.setText(R.string.output_loading);
@@ -93,7 +97,11 @@ public class MainActivity extends ActionBarActivity {
     	startActivity(intent);
     }
     
-    private void setState(AuroraStatus status) {
+    private void setStatus(AuroraStatus status) {
+    	assert status != null : "Aurora Status to set cannot be null";
+    	
+    	Log.v(getClass().getSimpleName(), "Setting new status " + status);
+    	
     	TextView outputText = (TextView)findViewById(R.id.output);
 	    TextView explanationText = (TextView)findViewById(R.id.explanation);
     	outputText.setText(status.text);
@@ -101,6 +109,8 @@ public class MainActivity extends ActionBarActivity {
 	    explanationText.setText(getString(status.explanation, status.level));
 	    
 	    if(status.notify) {
+		    Log.v(getClass().getSimpleName(), "Should notify, vibrating...");
+	    	
 	    	Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 	    	vibrator.vibrate(VIBRATE_DURATION);
 	    }
@@ -110,6 +120,8 @@ public class MainActivity extends ActionBarActivity {
     	private int minLevel;
     	
     	public StatusRetrievalTask(int minLevel) {
+    		assert minLevel >= 0 && minLevel <= 9 : "Minimum level must be in [0, 9]";
+    		
     		this.minLevel = minLevel;
     	}
     	
@@ -120,7 +132,7 @@ public class MainActivity extends ActionBarActivity {
     	
     	@Override
     	protected void onPostExecute(AuroraStatus result) {
-    		setState(result);
+    		setStatus(result);
     	}
     }
     
@@ -128,7 +140,6 @@ public class MainActivity extends ActionBarActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i("AlarmReceiver", "onReceive called");
 			update();
 		}
     	

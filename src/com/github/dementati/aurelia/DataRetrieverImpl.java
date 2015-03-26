@@ -1,5 +1,7 @@
 package com.github.dementati.aurelia;
 
+import android.util.Log;
+
 import com.github.dementati.aurelia.levelretriever.AuroraServiceEuRetriever;
 import com.github.dementati.aurelia.levelretriever.GeophysInstRetriever;
 import com.github.dementati.aurelia.levelretriever.LevelAggregator;
@@ -17,9 +19,13 @@ public class DataRetrieverImpl implements DataRetriever {
 	 */
 	@Override
 	public DataRetrievalResult retrieve() {
+		Log.v(getClass().getSimpleName(), "Retrieving data...");
+		
 		DataRetrievalResult result = new DataRetrievalResult();
 	    result.currentLevel = levelAggregator.retrieveLevel();
 	    result.weather = YrRetriever.retrieveWeather("Sweden", "V%C3%A4sterbotten", "Ume%C3%A5");
+	   
+	    Log.v(getClass().getSimpleName(), "Retrieved data: " + result);
 	    
 	    return result;
 	}

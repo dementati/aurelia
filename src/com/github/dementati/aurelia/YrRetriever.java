@@ -6,6 +6,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import android.util.Log;
+
 public class YrRetriever {
 	public enum Weather {
 		CLOUDY,
@@ -20,6 +22,10 @@ public class YrRetriever {
 	}
 
 	private static String getWeatherStr(String url) {
+		assert url != null : "Weather site URL cannot be null";
+		
+		Log.v(YrRetriever.class.getSimpleName(), "Retrieving today's weather...");
+		
 		Document doc;
 		try {
 			doc = Jsoup.connect(url).get();
@@ -30,20 +36,25 @@ public class YrRetriever {
 			Element img = doc.select(selectStr).first();
 			
 			if(img != null) {
-				return img.attr("alt");
+				String weatherStr = img.attr("alt");
+				Log.v(YrRetriever.class.getSimpleName(), "Retrieved raw weather string " + weatherStr);
+				return weatherStr;
 			} else {
+				Log.v(YrRetriever.class.getSimpleName(), "Couldn't retrieve weather string for today, trying to retrieve for tomorrow...");
 				return getTomorrowsWeatherStr(url);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(YrRetriever.class.getSimpleName(), e.getMessage());
+			return null;
 		}
-		
-		return null;
 	}
 	
 	private static String getTomorrowsWeatherStr(String url) {
+		assert url != null : "Tomorrow's weather site URL cannot be null";
+		
 		url = url + "/hour_by_hour_tomorrow.html";
+		
+		Log.v(YrRetriever.class.getSimpleName(), "Retrieving tomorrow's weather...");
 		
 		Document doc;
 		try {
@@ -51,39 +62,50 @@ public class YrRetriever {
 			
 			String selectStr = "body > div:eq(3) > table > tbody > tr:last-child > td:first-child > img";
 			selectStr = "body > div:eq(3) > table > tbody > tr:last-child > td > img";
-			//Log.i("YrRetriever", "selectStr = " + selectStr);
 			Element img = doc.select(selectStr).first();
+			
+			String weatherStr = img.attr("alt");
+			Log.v(YrRetriever.class.getSimpleName(), "Retrieved raw weather string " + weatherStr);
 			return img.attr("alt");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(YrRetriever.class.getSimpleName(), e.getMessage());
+			return null;
 		}
-		
-		return null;
 	}
 	
 	public static Weather retrieveWeather(String country, String region, String city) {		
+		assert country != null : "Country cannot be null";
+		assert region != null : "Region cannot be null";
+		assert city != null : "City cannot be null";
+
+		Log.v(YrRetriever.class.getSimpleName(), String.format("Retrieving weather data for %s/%s/%s from yr.no...", country, region, city));
+		
 		String url = "http://m.yr.no/place/" + country + "/" + region + "/" + city;
 
         String weatherStr = getWeatherStr(url);
+        Weather weather;
         if(weatherStr.equals("Cloudy")) {
-			return Weather.CLOUDY;
+			weather = Weather.CLOUDY;
         } else if(weatherStr.equals("Partly cloudy")) {
-			return Weather.PARTLY_CLOUDY;
+			weather = Weather.PARTLY_CLOUDY;
         } else if(weatherStr.equals("Heavy rain")) {
-			return Weather.HEAVY_RAIN;
+			weather = Weather.HEAVY_RAIN;
         } else if(weatherStr.equals("Rain")) {
-			return Weather.RAIN;
+			weather = Weather.RAIN;
         } else if(weatherStr.equals("Sleet")) {
-			return Weather.SLEET;
+			weather = Weather.SLEET;
         } else if(weatherStr.equals("Fair")) {
-			return Weather.FAIR;
+			weather = Weather.FAIR;
         } else if(weatherStr.equals("Snow")) {
-			return Weather.SNOW;
+			weather = Weather.SNOW;
         } else if(weatherStr.equals("Rain showers")) {
-        	return Weather.RAIN_SHOWERS;
+        	weather = Weather.RAIN_SHOWERS;
         } else {
-        	return Weather.UNKNOWN;
+        	weather = Weather.UNKNOWN;
         }
+        
+        Log.v(YrRetriever.class.getSimpleName(), "Retrieved weather " + weather);
+        
+        return weather;
 	}
 }

@@ -2,6 +2,8 @@ package com.github.dementati.aurelia.levelretriever;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 
 public class LevelAggregator implements LevelRetriever {
 	private ArrayList<LevelRetriever> retrievers = new ArrayList<LevelRetriever>();
@@ -12,6 +14,7 @@ public class LevelAggregator implements LevelRetriever {
 	
 	@Override
 	public double retrieveLevel() {
+		Log.v(getClass().getSimpleName(), "Retrieveing aggregate level...");
 		double sum = 0;
 		int retrieverCount = 0;
 		for(LevelRetriever retriever : retrievers) {
@@ -23,8 +26,11 @@ public class LevelAggregator implements LevelRetriever {
 		}
 		
 		if(retrieverCount > 0) {
-			return sum/retrieverCount;
+			double avgLevel = sum/retrieverCount;
+			Log.v(getClass().getSimpleName(), "Retrieved an average level of " + avgLevel);
+			return avgLevel;
 		} else {
+			Log.v(getClass().getSimpleName(), "Retrieved no levels.");
 			return NO_LEVEL;
 		}
 	}

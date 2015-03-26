@@ -11,4 +11,11 @@ public class DataRetrievalResult {
 		this.currentLevel = currentLevel;
 		this.weather = weather;
 	}
+
+	@Override
+	public String toString() {
+		return "DataRetrievalResult [currentLevel=" + currentLevel
+				+ ", weather=" + weather + "]";
+	}
+	
 }

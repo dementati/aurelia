@@ -1,5 +1,7 @@
 package com.github.dementati.aurelia;
 
+import android.util.Log;
+
 
 public class AuroraStatusRetriever {
 	private DataRetriever dataRetriever;
@@ -10,13 +12,15 @@ public class AuroraStatusRetriever {
 	}
 
 	public AuroraStatusRetriever(DataRetriever dataRetriever) {
+		assert dataRetriever != null : "Data retriever cannot be null";
+		
 		this.dataRetriever = dataRetriever;
 	}
 	
 	public AuroraStatus retrieve(int minLevel) {
-		if(minLevel < 0 || minLevel > 9) {
-			throw new IllegalArgumentException("Invalid minimum level");
-		}
+		assert minLevel >= 0 && minLevel <= 9 : "Invalid minimum level";
+		
+		Log.v(getClass().getSimpleName(), "Retrieving aurora status...");
 		
 		DataRetrievalResult data = dataRetriever.retrieve();
 		
@@ -84,10 +88,14 @@ public class AuroraStatusRetriever {
 	
 		result.notify = shouldNotify(result);
 		lastStatus = result;
+		
+		Log.v(getClass().getSimpleName(), "Retrieved aurora status: " + result);
 		return result;
 	}
 	
 	public boolean shouldNotify(AuroraStatus newStatus) {
+		assert newStatus != null : "New status cannot be null";
+		
 		if(lastStatus == null) {
 			return newStatus.color == R.color.go;
 		} else {
@@ -102,5 +110,12 @@ public class AuroraStatusRetriever {
 		public int explanation;
 		public double level;
 		public boolean notify;
+
+		@Override
+		public String toString() {
+			return "AuroraStatus [text=" + text + ", color=" + color
+					+ ", explanation=" + explanation + ", level=" + level
+					+ ", notify=" + notify + "]";
+		}
 	}
 }

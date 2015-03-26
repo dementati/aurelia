@@ -11,7 +11,6 @@ import com.github.dementati.aurelia.R;
 import junit.framework.TestCase;
 
 public class AuroraStatusRetrieverTest extends TestCase {
-	private static final double DEFAULT_LEVEL = 3.0;
 	private static final int DEFAULT_MIN_LEVEL = 3;
 	private static final Weather DEFAULT_WEATHER = Weather.FAIR;
 	
@@ -230,30 +229,6 @@ public class AuroraStatusRetrieverTest extends TestCase {
 		assertEquals(currentLevel, equalStatus.level);
 	}
 	
-	public void testOutOfBoundsMinLevelLow() {
-		double currentLevel = DEFAULT_LEVEL;
-		AuroraStatusRetriever retriever = getTestRetriever(currentLevel, DEFAULT_WEATHER);
-		
-		try {
-			retriever.retrieve(-1);
-			fail("Missing IllegalArgumentException.");
-		} catch(IllegalArgumentException e) {
-			assertEquals("Invalid minimum level", e.getMessage());
-		}
-	}
-	
-	public void testOutOfBoundsMinLevelHigh() {
-		double currentLevel = DEFAULT_LEVEL;
-		AuroraStatusRetriever retriever = getTestRetriever(currentLevel, DEFAULT_WEATHER);
-		
-		try {
-			retriever.retrieve(10);
-			fail("Missing IllegalArgumentException.");
-		} catch(IllegalArgumentException e) {
-			assertEquals("Invalid minimum level", e.getMessage());
-		}
-	}
-
 	public void testNotifyWithInitialPositiveStatus() {
 		double currentLevel = 2.0;
 		Weather weather = Weather.FAIR;
