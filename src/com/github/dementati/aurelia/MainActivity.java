@@ -1,16 +1,24 @@
 package com.github.dementati.aurelia;
 
-import com.github.dementati.aurelia.AuroraStatusRetriever.AuroraStatus;
+
+import java.lang.ref.WeakReference;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -21,12 +29,9 @@ import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
-	private static final int ALARM_INTERVAL = 30000;
-	private static final int VIBRATE_DURATION = 500;
-	
-	AuroraStatusRetriever retriever = new AuroraStatusRetriever();
-	AlarmManager manager;
-	PendingIntent pendingIntent;
+	Messenger serviceMessenger;
+	Messenger activityMessenger = new Messenger(new MessageHandler(this));
+	AuroraServiceConnection serviceConnection = new AuroraServiceConnection();
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +42,55 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
-        this.registerReceiver(new AlarmReceiver(), new IntentFilter("com.github.dementati.aurelia.RETRIEVE_DATA"));
-        Intent alarmIntent = new Intent("com.github.dementati.aurelia.RETRIEVE_DATA");
-        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
-        startAlarm();
+        Intent intent = new Intent(this, AuroraService.class);
+        startService(intent);
     }
-
+   
     @Override
+    protected void onStart() {
+    	super.onStart();
+
+    	Log.v(getClass().getSimpleName(), "Starting activity...");
+    	
+    	Log.v(getClass().getSimpleName(), "Binding aurora service...");
+        Intent intent = new Intent(this, AuroraService.class);
+        bindService(intent, serviceConnection, 0);
+    }
+    
+    @Override
+    protected void onStop() {
+    	super.onStop();
+    	
+    	Log.v(getClass().getSimpleName(), "Stopping activity...");
+    	
+    	Log.v(getClass().getSimpleName(), "Unbinding aurora service...");
+    	unbindService(serviceConnection);
+    }
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+
+    	Log.v(getClass().getSimpleName(), "Resuming activity.");
+
+    	requestStatus();
+    }
+    
+    private void requestStatus() {
+    	if(serviceMessenger != null) {
+		    Message requestStatusMsg = new Message();
+		    requestStatusMsg.what = AuroraService.MSG_REQUEST_STATUS;
+		    try {
+				serviceMessenger.send(requestStatusMsg);
+			} catch (RemoteException e) {
+				Log.e(getClass().getSimpleName(), e.getMessage());
+			}
+    	} else {
+    		Log.e(getClass().getSimpleName(), "Would request aurora status from service, but there is no service messenger");
+    	}
+	}
+
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -62,14 +109,6 @@ public class MainActivity extends ActionBarActivity {
     	}
     }  
     
-    public void startAlarm() {
-    	Log.v(getClass().getSimpleName(), "Starting alarm");
-    	
-    	manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-    	manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 
-    			ALARM_INTERVAL, pendingIntent);
-    }
-    
     public void update() {
     	Log.v(getClass().getSimpleName(), "Initiating status update");
     	
@@ -81,8 +120,6 @@ public class MainActivity extends ActionBarActivity {
 		
 	    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 		int minLevel = pref.getInt("pref_level", 2);
-		
-    	new StatusRetrievalTask(minLevel).execute();
     }
     
     public void openSettings() {
@@ -90,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
     	startActivity(intent);
     }
     
-    private void setStatus(AuroraStatus status) {
+    public void setStatus(AuroraStatus status) {
     	assert status != null : "Aurora Status to set cannot be null";
     	
     	Log.v(getClass().getSimpleName(), "Setting new status " + status);
@@ -100,41 +137,49 @@ public class MainActivity extends ActionBarActivity {
     	outputText.setText(status.text);
 	    outputText.setTextColor(getResources().getColor(status.color));
 	    explanationText.setText(getString(status.explanation, status.level));
-	    
-	    if(status.notify) {
-		    Log.v(getClass().getSimpleName(), "Should notify, vibrating...");
-	    	
-	    	Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-	    	vibrator.vibrate(VIBRATE_DURATION);
-	    }
     }
     
-    private class StatusRetrievalTask extends AsyncTask<Void, Void, AuroraStatus> {
-    	private int minLevel;
-    	
-    	public StatusRetrievalTask(int minLevel) {
-    		assert minLevel >= 0 && minLevel <= 9 : "Minimum level must be in [0, 9]";
-    		
-    		this.minLevel = minLevel;
-    	}
-    	
-    	@Override
-    	protected AuroraStatus doInBackground(Void... params) {
-    		return retriever.retrieve(minLevel);
-    	}
-    	
-    	@Override
-    	protected void onPostExecute(AuroraStatus result) {
-    		setStatus(result);
-    	}
-    }
-    
-    public class AlarmReceiver extends BroadcastReceiver {
+    class AuroraServiceConnection implements ServiceConnection {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.v(getClass().getSimpleName(), "Service connected.");
+			
+			serviceMessenger = new Messenger(service);
+			
+			Message supplyMessengerMsg = new Message();
+			supplyMessengerMsg.what = AuroraService.MSG_SUPPLY_MESSENGER;
+			supplyMessengerMsg.replyTo = activityMessenger;
+			try {
+				serviceMessenger.send(supplyMessengerMsg);
+			} catch (RemoteException e) {
+				Log.e(getClass().getSimpleName(), e.getMessage());
+			}
+			
+			requestStatus();
+		}
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
-			update();
+		public void onServiceDisconnected(ComponentName name) {
+			serviceMessenger = null;
+		}
+    }
+    
+    static class MessageHandler extends Handler {
+    	private final WeakReference<MainActivity> activity;
+    	
+    	public MessageHandler(MainActivity pActivity) {
+    		this.activity = new WeakReference<MainActivity>(pActivity);
 		}
     	
+    	@Override
+    	public void handleMessage(Message msg) {
+    		switch(msg.what) {
+			    case AuroraService.MSG_STATUS_RESPONSE:
+			    	AuroraStatus status = msg.getData().getParcelable("status");
+			    	Log.v(MainActivity.class.getSimpleName(), "Received new status from service: " + status);
+			    	activity.get().setStatus(status);
+				    break;
+    		}
+    	}
     }
 }

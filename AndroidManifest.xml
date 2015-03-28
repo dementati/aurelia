@@ -33,6 +33,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.github.dementati.aurelia.MainActivity" />
         </activity>
+        <service android:name="com.github.dementati.aurelia.AuroraService"></service>
     </application>
-
 </manifest>

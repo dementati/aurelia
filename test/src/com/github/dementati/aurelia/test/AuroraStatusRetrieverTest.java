@@ -1,7 +1,7 @@
 package com.github.dementati.aurelia.test;
 
+import com.github.dementati.aurelia.AuroraStatus;
 import com.github.dementati.aurelia.AuroraStatusRetriever;
-import com.github.dementati.aurelia.AuroraStatusRetriever.AuroraStatus;
 import com.github.dementati.aurelia.DataRetrievalResult;
 import com.github.dementati.aurelia.DataRetriever;
 import com.github.dementati.aurelia.YrRetriever.Weather;
@@ -154,6 +154,17 @@ public class AuroraStatusRetrieverTest extends TestCase {
 		assertEquals(R.string.output_stay, status.text);
 		assertEquals(R.color.stay, status.color);
 		assertEquals(R.string.explanation_stay_snow, status.explanation);
+		assertEquals(currentLevel, status.level);
+	}
+	
+	public void testHighLevelFog() {
+		double currentLevel = DEFAULT_MIN_LEVEL + 1;
+		AuroraStatusRetriever retriever = getTestRetriever(currentLevel, Weather.FOG);
+		AuroraStatus status = retriever.retrieve(DEFAULT_MIN_LEVEL);
+		
+		assertEquals(R.string.output_stay, status.text);
+		assertEquals(R.color.stay, status.color);
+		assertEquals(R.string.explanation_stay_fog, status.explanation);
 		assertEquals(currentLevel, status.level);
 	}
 	

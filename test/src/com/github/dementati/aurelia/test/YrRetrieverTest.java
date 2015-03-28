@@ -16,7 +16,8 @@ public class YrRetrieverTest extends TestCase {
 		YrRetriever.Weather.RAIN_SHOWERS,
 		YrRetriever.Weather.SLEET,
 		YrRetriever.Weather.SNOW,
-		YrRetriever.Weather.LIGHT_SNOW
+		YrRetriever.Weather.LIGHT_SNOW,
+		YrRetriever.Weather.FOG
 	};
 	
 	public void testRetrieveWeatherCopenhagen() {

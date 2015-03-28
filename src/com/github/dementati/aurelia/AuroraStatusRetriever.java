@@ -73,6 +73,13 @@ public class AuroraStatusRetriever {
 					result.level = data.currentLevel;
 				    break;
 				    
+			    case FOG:
+			    	result.text = R.string.output_stay;
+			    	result.color = R.color.stay;
+			    	result.explanation = R.string.explanation_stay_fog;
+			    	result.level = data.currentLevel;
+			    	break;
+				    
 			    default:
 					result.text = R.string.output_confused;
 					result.color = R.color.neutral;
@@ -102,21 +109,6 @@ public class AuroraStatusRetriever {
 		} else {
 			return (lastStatus.color == R.color.stay || lastStatus.color == R.color.neutral)
 				&& newStatus.color == R.color.go;
-		}
-	}
-	
-	public class AuroraStatus {
-		public int text;
-		public int color;
-		public int explanation;
-		public double level;
-		public boolean notify;
-
-		@Override
-		public String toString() {
-			return "AuroraStatus [text=" + text + ", color=" + color
-					+ ", explanation=" + explanation + ", level=" + level
-					+ ", notify=" + notify + "]";
 		}
 	}
 }

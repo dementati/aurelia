@@ -16,6 +16,7 @@
     <string name="explanation_stay_cloudy">It will be cloudy tonight. The level is %.1f.</string>
     <string name="explanation_stay_rainy">It will be raining tonight. The level is %.1f.</string>
     <string name="explanation_stay_snow">It will be snowing tonight. The level is %.1f.</string>
+    <string name="explanation_stay_fog">It will be foggy tonight. The level is %.1f.</string>
     <string name="explanation_confused">I am confused and can\'t help you, sorry!.</string>
     
 

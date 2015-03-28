@@ -19,6 +19,7 @@ public class YrRetriever {
 		SNOW,
 		LIGHT_SNOW,
 		RAIN_SHOWERS,
+		FOG,
 		UNKNOWN
 	}
 
@@ -103,6 +104,8 @@ public class YrRetriever {
         	weather = Weather.LIGHT_SNOW;
         } else if(weatherStr.equals("Rain showers")) {
         	weather = Weather.RAIN_SHOWERS;
+        } else if(weatherStr.equals("Fog")) {
+        	weather = Weather.FOG;
         } else {
         	weather = Weather.UNKNOWN;
         }
